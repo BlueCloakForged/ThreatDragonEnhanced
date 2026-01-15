@@ -47,9 +47,13 @@
     "express-rate-limit": "^8.2.1",
     "googleapis": "^166.0.0",
     "helmet": "^8.1.0",
+    "jimp": "^1.6.0",
     "jsonwebtoken": "^9.0.0",
+    "multer": "^2.0.2",
     "octonode": "^0.10.2",
+    "pdf-parse": "^2.4.5",
     "serve-favicon": "^2.5.0",
+    "tesseract.js": "^7.0.0",
     "winston": "^3.8.2"
   },
   "devDependencies": {
