@@ -3,11 +3,9 @@
  * Extracts text from PDF, DOCX, TXT, and MD files
  */
 
-import * as pdfjsLib from 'pdfjs-dist';
-import mammoth from 'mammoth';
-
-// Configure PDF.js worker
-pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+// PDF.js and mammoth are lazy-loaded to avoid import issues
+let pdfjsLib = null;
+let mammoth = null;
 
 export class T2TParser {
     /**
@@ -49,6 +47,14 @@ export class T2TParser {
      */
     async parsePDF(file) {
         try {
+            // Lazy load pdfjs-dist only when needed
+            if (!pdfjsLib) {
+                pdfjsLib = await import('pdfjs-dist');
+                // Use worker file from public folder (copied during build)
+                // This avoids CDN fetches and webpack bundling issues
+                pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
+            }
+
             const arrayBuffer = await file.arrayBuffer();
             const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
             const pdf = await loadingTask.promise;
@@ -97,6 +103,11 @@ export class T2TParser {
      */
     async parseDOCX(file) {
         try {
+            // Lazy load mammoth only when needed
+            if (!mammoth) {
+                mammoth = await import('mammoth');
+            }
+
             const arrayBuffer = await file.arrayBuffer();
             const result = await mammoth.extractRawText({ arrayBuffer });
 

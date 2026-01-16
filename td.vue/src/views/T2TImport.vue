@@ -18,12 +18,9 @@
                     <b-card class="shadow-sm">
                         <div class="text-center mb-4">
                             <div class="logo-placeholder mb-3">
-                                <img src="/baby_dragon_glasses_doc.svg" alt="Import Logo" class="import-logo" />
+                                <img src="@/assets/T2TDrag.png" alt="T2T Import Logo" class="import-logo" />
                             </div>
-                            <h4>Welcome to Import</h4>
-                            <p class="text-muted">
-                                Transform your Operational Test Plans into interactive threat models
-                            </p>
+                            <h4>Import Plans into interactive threat models</h4>
                         </div>
 
                         <b-row class="mb-4">
