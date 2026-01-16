@@ -6,6 +6,7 @@
                     <td-graph-properties />
                 </b-card-body>
             </b-card>
+            <td-element-suggestions-drawer />
         </b-col>
         <b-col md="6">
             <b-card header-tag="header">
@@ -104,6 +105,7 @@ import dataChanged from '@/service/x6/graph/data-changed.js';
 import tmActions from '@/store/actions/threatmodel.js';
 import TdGraphProperties from '@/components/GraphProperties.vue';
 import TdGraphThreats from '@/components/GraphThreats.vue';
+import TdElementSuggestionsDrawer from '@/components/ElementSuggestionsDrawer.vue';
 
 export default {
     name: 'TdGraphMeta',
@@ -121,7 +123,8 @@ export default {
     }),
     components: {
         TdGraphProperties,
-        TdGraphThreats
+        TdGraphThreats,
+        TdElementSuggestionsDrawer
     },
     async mounted() {
         this.init();
