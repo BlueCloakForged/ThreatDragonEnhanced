@@ -1,9 +1,11 @@
 /**
  * Entity Extractor
  * Extracts nodes and connections from OTP text using regex patterns
+ *
+ * Enhanced with patterns from T2T Pipeline Agent (entity_extractor.py)
  */
 
-import { T2TPatterns, PatternHelpers } from './t2tPatterns.js';
+import { T2TPatterns, PatternHelpers, OS_PATTERNS, SERVICE_PATTERNS, NETWORK_PATTERNS, ROLE_PATTERNS, INSTRUMENTATION_PATTERNS } from './t2tPatterns.js';
 import { v4 as uuidv4 } from 'uuid';
 
 export class EntityExtractor {
@@ -131,18 +133,83 @@ export class EntityExtractor {
 
     /**
      * Extract common system names (fallback for nodes without IPs)
+     * Uses enhanced OS_PATTERNS from T2T Pipeline Agent
      * @param {string} text
      */
     extractFromSystemNames(text) {
-        const matches = text.matchAll(T2TPatterns.nodePatterns.systemNames);
         const seenNames = new Set();
 
+        // First, use enhanced OS patterns for better detection
+        for (const { pattern, hint, role } of OS_PATTERNS) {
+            const matches = text.matchAll(new RegExp(pattern.source, 'gi'));
+            for (const match of matches) {
+                const nodeName = match[1].trim();
+                const normalizedName = nodeName.toLowerCase();
+
+                // Skip duplicates
+                if (seenNames.has(normalizedName)) continue;
+                seenNames.add(normalizedName);
+
+                // Skip if already extracted by higher-confidence method
+                if (this.nodes.has(nodeName)) continue;
+
+                const nodeId = this.getOrCreateNodeId(nodeName);
+                const context = PatternHelpers.getContextWindow(text, nodeName);
+                const type = PatternHelpers.classifyNodeType(nodeName, role, context);
+
+                this.addOrUpdateNode({
+                    id: nodeId,
+                    name: nodeName,
+                    ipAddress: null,
+                    type,
+                    services: [],
+                    metadata: {
+                        extractedFrom: 'osPattern',
+                        templateHint: hint,
+                        defaultRole: role
+                    },
+                    confidence: 75, // Higher confidence with OS pattern match
+                    source: 'text'
+                });
+            }
+        }
+
+        // Also check instrumentation patterns
+        for (const { pattern, name, role } of INSTRUMENTATION_PATTERNS) {
+            if (pattern.test(text)) {
+                if (seenNames.has(name.toLowerCase())) continue;
+                seenNames.add(name.toLowerCase());
+
+                if (this.nodes.has(name)) continue;
+
+                const nodeId = this.getOrCreateNodeId(name);
+                const context = PatternHelpers.getContextWindow(text, name);
+                const type = PatternHelpers.classifyNodeType(name, role, context);
+
+                this.addOrUpdateNode({
+                    id: nodeId,
+                    name: name,
+                    ipAddress: null,
+                    type,
+                    services: [],
+                    metadata: {
+                        extractedFrom: 'instrumentationPattern',
+                        defaultRole: role
+                    },
+                    confidence: 70,
+                    source: 'text'
+                });
+            }
+        }
+
+        // Fallback to legacy system names pattern
+        const matches = text.matchAll(T2TPatterns.nodePatterns.systemNames);
         for (const match of matches) {
             const nodeName = match[0];
 
             // Skip duplicates
-            if (seenNames.has(nodeName)) continue;
-            seenNames.add(nodeName);
+            if (seenNames.has(nodeName.toLowerCase())) continue;
+            seenNames.add(nodeName.toLowerCase());
 
             // Skip if already extracted by higher-confidence method
             if (this.nodes.has(nodeName)) continue;

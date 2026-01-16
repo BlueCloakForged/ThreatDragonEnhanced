@@ -2,18 +2,147 @@
  * T2T Extraction Patterns
  * Regex patterns for extracting entities from OTP documents
  *
- * Based on real OTP format analysis from sample_mission.txt
+ * Enhanced with patterns from T2T Pipeline Agent (entity_extractor.py)
+ * Supports comprehensive OS, service, network, and role detection
  */
 
 /**
- * Regex patterns for entity extraction
+ * Operating System patterns with template hints and default roles
+ * Format: { pattern, templateHint, defaultRole }
+ * Ported from Python T2T Pipeline Agent
+ */
+export const OS_PATTERNS = [
+    // Attack/Pentest OS
+    { pattern: /\b(kali(?:\s*linux)?(?:\s*\d+(?:\.\d+)?)?)\b/i, hint: 'kali', role: 'attacker' },
+    { pattern: /\b(parrot(?:\s*(?:os|sec))?)\b/i, hint: 'parrot', role: 'attacker' },
+    { pattern: /\b(black\s*arch)\b/i, hint: 'blackarch', role: 'attacker' },
+    // Network OS
+    { pattern: /\b(vyos(?:\s*\d+(?:\.\d+)?)?)\b/i, hint: 'vyos', role: 'router' },
+    { pattern: /\b(pfsense|pf-sense)(?:\s*[\d.]+)?\b/i, hint: 'pfsense', role: 'firewall' },
+    { pattern: /\b(opnsense)(?:\s*[\d.]+)?\b/i, hint: 'opnsense', role: 'firewall' },
+    // Linux Distributions
+    { pattern: /\b(ubuntu(?:\s*(?:server|desktop|lts))?(?:\s*\d+(?:\.\d+)?)?)\b/i, hint: 'ubuntu', role: 'server' },
+    { pattern: /\b(centos(?:\s*(?:stream)?\s*\d+)?)\b/i, hint: 'centos', role: 'server' },
+    { pattern: /\b(debian(?:\s*\d+)?)\b/i, hint: 'debian', role: 'server' },
+    { pattern: /\b(fedora(?:\s*\d+)?)\b/i, hint: 'fedora', role: 'workstation' },
+    { pattern: /\b(red\s*hat|rhel(?:\s*\d+)?)\b/i, hint: 'rhel', role: 'server' },
+    { pattern: /\b(rocky\s*linux(?:\s*\d+)?)\b/i, hint: 'rocky', role: 'server' },
+    { pattern: /\b(alma\s*linux(?:\s*\d+)?)\b/i, hint: 'almalinux', role: 'server' },
+    { pattern: /\b(oracle\s*linux(?:\s*\d+)?)\b/i, hint: 'oracle-linux', role: 'server' },
+    { pattern: /\b(suse|sles)(?:\s*\d+)?\b/i, hint: 'suse', role: 'server' },
+    { pattern: /\b(arch\s*linux)\b/i, hint: 'arch', role: 'workstation' },
+    // BSD variants
+    { pattern: /\b(freebsd(?:\s*\d+)?)\b/i, hint: 'freebsd', role: 'server' },
+    { pattern: /\b(openbsd(?:\s*\d+)?)\b/i, hint: 'openbsd', role: 'firewall' },
+    // Windows
+    { pattern: /\b(windows\s*(?:server\s*)?(?:20\d{2}|1[01]|xp|7|8)(?:\s*r2)?)\b/i, hint: 'windows', role: 'server' },
+    { pattern: /\b(windows\s*10)\b/i, hint: 'windows10', role: 'workstation' },
+    { pattern: /\b(windows\s*11)\b/i, hint: 'windows11', role: 'workstation' },
+    // Vulnerable/Test OS
+    { pattern: /\b(metasploitable(?:\s*\d)?)\b/i, hint: 'metasploitable', role: 'victim' },
+    { pattern: /\b(dvwa)\b/i, hint: 'dvwa', role: 'victim' },
+    // Embedded/IoT
+    { pattern: /\b(openwrt)\b/i, hint: 'openwrt', role: 'router' },
+    { pattern: /\b(raspb(?:erry\s*pi|ian))\b/i, hint: 'raspbian', role: 'iot_device' },
+    { pattern: /\b(popos|pop[_\s]?os)(?:\s*[\d.]+)?\b/i, hint: 'popos', role: 'workstation' },
+    // Hypervisors
+    { pattern: /\b(esxi(?:\s*\d+(?:\.\d+)*)?)\b/i, hint: 'esxi', role: 'hypervisor' },
+    { pattern: /\b(vmware\s*(?:vsphere|esx(?:i)?)?(?:\s*\d+(?:\.\d+)?)?)\b/i, hint: 'esxi', role: 'hypervisor' },
+    { pattern: /\b(proxmox(?:\s*ve)?(?:\s*\d+(?:\.\d+)?)?)\b/i, hint: 'proxmox', role: 'hypervisor' },
+    { pattern: /\b(hyper[-\s]?v(?:\s*server)?)\b/i, hint: 'hyperv', role: 'hypervisor' },
+    { pattern: /\b(vcenter(?:\s*server)?(?:\s*[\d.]+)?)\b/i, hint: 'vcenter', role: 'hypervisor' },
+    // Network devices
+    { pattern: /\b(mikrotik(?:\s*(?:routeros)?(?:\s*rb\d+)?)?)\b/i, hint: 'mikrotik', role: 'router' },
+    { pattern: /\b(routeros(?:\s*[\d.]+)?)\b/i, hint: 'mikrotik', role: 'router' },
+    { pattern: /\b(cisco\s*ios(?:\s*[\d.]+)?)\b/i, hint: 'cisco-ios', role: 'router' },
+    { pattern: /\b(junos(?:\s*[\d.]+)?)\b/i, hint: 'junos', role: 'router' },
+    // Containers
+    { pattern: /\b(docker(?:\s*(?:ce|ee))?(?:\s*[\d.]+)?)\b/i, hint: 'docker', role: 'server' },
+    { pattern: /\b(kubernetes|k8s)\b/i, hint: 'kubernetes', role: 'server' },
+    { pattern: /\b(podman)\b/i, hint: 'podman', role: 'server' },
+];
+
+/**
+ * Service patterns with default ports
+ * Format: { pattern, service, port }
+ */
+export const SERVICE_PATTERNS = [
+    { pattern: /\b(ssh|sshd)\b/i, service: 'ssh', port: 22 },
+    { pattern: /\b(http|web\s*server|apache|nginx)\b/i, service: 'http', port: 80 },
+    { pattern: /\b(https|ssl|tls)\b/i, service: 'https', port: 443 },
+    { pattern: /\b(ftp|ftpd)\b/i, service: 'ftp', port: 21 },
+    { pattern: /\b(mysql|mariadb)\b/i, service: 'mysql', port: 3306 },
+    { pattern: /\b(postgresql|postgres)\b/i, service: 'postgresql', port: 5432 },
+    { pattern: /\b(rdp|remote\s*desktop)\b/i, service: 'rdp', port: 3389 },
+    { pattern: /\b(smb|samba|cifs)\b/i, service: 'smb', port: 445 },
+    { pattern: /\b(dns|named|bind)\b/i, service: 'dns', port: 53 },
+    { pattern: /\b(ldap|active\s*directory)\b/i, service: 'ldap', port: 389 },
+    { pattern: /\b(modbus)\b/i, service: 'modbus', port: 502 },
+    { pattern: /\b(opc(?:-ua)?|opc\s*ua)\b/i, service: 'opc', port: 4840 },
+    { pattern: /\b(telnet)\b/i, service: 'telnet', port: 23 },
+    { pattern: /\b(snmp)\b/i, service: 'snmp', port: 161 },
+    { pattern: /\b(mqtt)\b/i, service: 'mqtt', port: 1883 },
+    { pattern: /\b(metasploit|msfconsole|meterpreter)\b/i, service: 'metasploit', port: null },
+    { pattern: /\b(burp|burpsuite)\b/i, service: 'burpsuite', port: null },
+];
+
+/**
+ * Network/enclave patterns
+ * Format: { pattern, name }
+ */
+export const NETWORK_PATTERNS = [
+    { pattern: /\b(dmz|demilitarized\s*zone)\b/i, name: 'DMZ' },
+    { pattern: /\b(internal|corp(?:orate)?|lan)\b/i, name: 'Internal' },
+    { pattern: /\b(external|internet|wan)\b/i, name: 'External' },
+    { pattern: /\b(management|mgmt|oob)\b/i, name: 'Management' },
+    { pattern: /\b(enclave|segment|zone)\b/i, name: 'Enclave' },
+    { pattern: /\b(red\s*(?:team\s*)?(?:network|enclave|zone))\b/i, name: 'Red Team' },
+    { pattern: /\b(blue\s*(?:team\s*)?(?:network|enclave|zone))\b/i, name: 'Blue Team' },
+    { pattern: /\b(gray(?:space)?|simulation)\b/i, name: 'Grayspace' },
+    { pattern: /\b(target\s*(?:space|network|environment))\b/i, name: 'Target Space' },
+    { pattern: /\b(whitecell|white\s*cell)\b/i, name: 'Whitecell' },
+];
+
+/**
+ * Role/function patterns
+ * Format: { pattern, role }
+ */
+export const ROLE_PATTERNS = [
+    { pattern: /\b(attacker|red\s*team|adversary|threat\s*actor)\b/i, role: 'attacker' },
+    { pattern: /\b(defender|blue\s*team|analyst)\b/i, role: 'defender' },
+    { pattern: /\b(router|gateway|edge\s*device)\b/i, role: 'router' },
+    { pattern: /\b(firewall|fw|security\s*appliance)\b/i, role: 'firewall' },
+    { pattern: /\b(switch|l2\s*switch|layer\s*2)\b/i, role: 'switch' },
+    { pattern: /\b(server|host|backend)\b/i, role: 'server' },
+    { pattern: /\b(workstation|client|desktop|endpoint)\b/i, role: 'workstation' },
+    { pattern: /\b(victim|target|vulnerable)\b/i, role: 'victim' },
+    { pattern: /\b(pivot|jump\s*(?:box|host)|bastion)\b/i, role: 'pivot' },
+    { pattern: /\b(plc|hmi|scada|ics|rtu)\b/i, role: 'ics_device' },
+    { pattern: /\b(iot|sensor|embedded)\b/i, role: 'iot_device' },
+    { pattern: /\b(hypervisor|esxi\s*(?:host|server)?|vm\s*host)\b/i, role: 'hypervisor' },
+    { pattern: /\b(instrumentation|monitoring|siem|ids|nids)\b/i, role: 'instrumentation' },
+    { pattern: /\b(redirect(?:or)?|socat|tunnel|proxy)\b/i, role: 'redirector' },
+];
+
+/**
+ * Instrumentation patterns (Security Onion, CDAP, etc.)
+ */
+export const INSTRUMENTATION_PATTERNS = [
+    { pattern: /\b(security\s*onion)\b/i, name: 'Security Onion', role: 'instrumentation' },
+    { pattern: /\b(cdap)\b/i, name: 'CDAP', role: 'instrumentation' },
+    { pattern: /\b(splunk)\b/i, name: 'Splunk', role: 'instrumentation' },
+    { pattern: /\b(elastic(?:search)?)\b/i, name: 'Elasticsearch', role: 'instrumentation' },
+    { pattern: /\b(zeek|bro)\b/i, name: 'Zeek', role: 'instrumentation' },
+    { pattern: /\b(suricata)\b/i, name: 'Suricata', role: 'instrumentation' },
+    { pattern: /\b(arkime|moloch)\b/i, name: 'Arkime', role: 'instrumentation' },
+];
+
+/**
+ * Regex patterns for entity extraction (legacy format for backward compatibility)
  */
 export const T2TPatterns = {
     /**
      * Node extraction patterns
-     * Matches formats like:
-     * - "Kali-01 | Kali Linux 2024.1 | x64 | 192.168.100.10 | Attacker | ssh, metasploit"
-     * - "NodeName (IP.ADD.RE.SS)"
      */
     nodePatterns: {
         // Markdown table row format
@@ -22,17 +151,17 @@ export const T2TPatterns = {
         // Inline format: NodeName (192.168.1.1)
         inline: /\b([A-Za-z][A-Za-z0-9_-]+)\s*\(([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})\)/g,
 
-        // Common system names
-        systemNames: /\b(Kali|Ubuntu|Windows|Server|Router|Firewall|pfSense|VyOS|DC-\d+|WS-\d+|WebSrv|FW-\d+)[A-Za-z0-9_-]*/gi
+        // Common system names (enhanced)
+        systemNames: /\b(Kali|Ubuntu|Windows|Server|Router|Firewall|pfSense|VyOS|DC-\d+|WS-\d+|WebSrv|FW-\d+|Mikrotik|ESXi|Proxmox|CentOS|Debian|RHEL)[A-Za-z0-9_-]*/gi
     },
 
     /**
      * IP address pattern
      */
-    ipPattern: /\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b/g,
+    ipPattern: /\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}(?:\/\d{1,2})?\b/g,
 
     /**
-     * Service detection patterns
+     * Service detection patterns (legacy - use SERVICE_PATTERNS for new code)
      */
     servicePatterns: {
         web: /\b(HTTP|HTTPS|Apache|Nginx|IIS|port\s*80|port\s*443|web\s*server)\b/gi,
@@ -228,5 +357,124 @@ export const PatternHelpers = {
     isEncryptedProtocol(protocol) {
         const encryptedProtocols = ['HTTPS', 'SSH', 'LDAPS', 'SMTPS', 'FTPS', 'TLS', 'SSL'];
         return encryptedProtocols.includes(protocol.toUpperCase());
+    },
+
+    /**
+     * Extract operating systems from text using enhanced patterns
+     * @param {string} text
+     * @returns {Array<{name: string, hint: string, role: string, confidence: number}>}
+     */
+    extractOperatingSystems(text) {
+        const results = [];
+        const seen = new Set();
+
+        for (const { pattern, hint, role } of OS_PATTERNS) {
+            const matches = text.matchAll(new RegExp(pattern.source, 'gi'));
+            for (const match of matches) {
+                const name = match[1].trim();
+                const key = name.toLowerCase();
+                if (!seen.has(key)) {
+                    seen.add(key);
+                    results.push({
+                        name,
+                        hint,
+                        role,
+                        confidence: 0.9,
+                        sourceText: match[0]
+                    });
+                }
+            }
+        }
+        return results;
+    },
+
+    /**
+     * Extract services from text using enhanced patterns
+     * @param {string} text
+     * @returns {Array<{service: string, port: number|null}>}
+     */
+    extractServicesEnhanced(text) {
+        const results = [];
+        const seen = new Set();
+
+        for (const { pattern, service, port } of SERVICE_PATTERNS) {
+            if (pattern.test(text)) {
+                if (!seen.has(service)) {
+                    seen.add(service);
+                    results.push({ service, port });
+                }
+            }
+        }
+        return results;
+    },
+
+    /**
+     * Extract network/enclave references from text
+     * @param {string} text
+     * @returns {Array<{name: string, confidence: number}>}
+     */
+    extractNetworks(text) {
+        const results = [];
+        const seen = new Set();
+
+        for (const { pattern, name } of NETWORK_PATTERNS) {
+            if (pattern.test(text)) {
+                if (!seen.has(name)) {
+                    seen.add(name);
+                    results.push({ name, confidence: 0.8 });
+                }
+            }
+        }
+        return results;
+    },
+
+    /**
+     * Extract roles from text
+     * @param {string} text
+     * @returns {Array<{role: string, confidence: number}>}
+     */
+    extractRoles(text) {
+        const results = [];
+        const seen = new Set();
+
+        for (const { pattern, role } of ROLE_PATTERNS) {
+            if (pattern.test(text)) {
+                if (!seen.has(role)) {
+                    seen.add(role);
+                    results.push({ role, confidence: 0.85 });
+                }
+            }
+        }
+        return results;
+    },
+
+    /**
+     * Extract IP addresses from text
+     * @param {string} text
+     * @returns {Array<string>}
+     */
+    extractIPAddresses(text) {
+        const ipPattern = /\b(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}(?:\/\d{1,2})?)\b/g;
+        const matches = text.matchAll(ipPattern);
+        const ips = new Set();
+        for (const match of matches) {
+            ips.add(match[1]);
+        }
+        return Array.from(ips);
+    },
+
+    /**
+     * Extract all entities from text (comprehensive extraction)
+     * @param {string} text
+     * @returns {Object} - { os, services, networks, roles, ips }
+     */
+    extractAllEntities(text) {
+        return {
+            os: this.extractOperatingSystems(text),
+            services: this.extractServicesEnhanced(text),
+            networks: this.extractNetworks(text),
+            roles: this.extractRoles(text),
+            ips: this.extractIPAddresses(text)
+        };
     }
 };
