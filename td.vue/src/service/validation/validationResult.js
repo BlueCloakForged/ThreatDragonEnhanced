@@ -209,14 +209,14 @@ function formatAjvMessage(ajvError) {
     const pathStr = path ? `at '${path}'` : '';
 
     switch (ajvError.keyword) {
-        case 'required':
-            return `Missing required property '${ajvError.params.missingProperty}' ${pathStr}`.trim();
-        case 'type':
-            return `Expected ${ajvError.params.type} ${pathStr}`.trim();
-        case 'enum':
-            return `Value must be one of: ${ajvError.params.allowedValues.join(', ')} ${pathStr}`.trim();
-        default:
-            return `${ajvError.message} ${pathStr}`.trim();
+    case 'required':
+        return `Missing required property '${ajvError.params.missingProperty}' ${pathStr}`.trim();
+    case 'type':
+        return `Expected ${ajvError.params.type} ${pathStr}`.trim();
+    case 'enum':
+        return `Value must be one of: ${ajvError.params.allowedValues.join(', ')} ${pathStr}`.trim();
+    default:
+        return `${ajvError.message} ${pathStr}`.trim();
     }
 }
 
@@ -225,12 +225,12 @@ function formatAjvMessage(ajvError) {
  */
 function getSuggestionForAjvError(ajvError) {
     switch (ajvError.keyword) {
-        case 'required':
-            return `Add the missing property '${ajvError.params.missingProperty}'`;
-        case 'type':
-            return `Ensure the value is of type '${ajvError.params.type}'`;
-        default:
-            return '';
+    case 'required':
+        return `Add the missing property '${ajvError.params.missingProperty}'`;
+    case 'type':
+        return `Ensure the value is of type '${ajvError.params.type}'`;
+    default:
+        return '';
     }
 }
 

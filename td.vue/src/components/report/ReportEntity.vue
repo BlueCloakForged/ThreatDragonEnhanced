@@ -162,14 +162,14 @@ export default {
                 'Medium': this.$t('threats.severity.medium'),
                 'High': this.$t('threats.severity.high'),
                 'Critical': this.$t('threats.severity.critical')
-            })[severity] ?? 'Unknown';
+            })[severity] || 'Unknown';
         },
         translateStatus(status) {
             return ({
                 'NotApplicable': this.$t('threats.status.notApplicable'),
                 'Open': this.$t('threats.status.open'),
                 'Mitigated': this.$t('threats.status.mitigated')
-            })[status] ?? 'Unknown';
+            })[status] || 'Unknown';
         }
     }
 };

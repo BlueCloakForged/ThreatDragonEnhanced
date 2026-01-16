@@ -118,7 +118,7 @@
                 </b-form-row>
 
                 <!-- Knowledge Base References Section -->
-                <b-form-row>
+                <b-form-row v-if="threat && threat.references">
                     <b-col>
                         <div class="kb-references-section">
                             <h6 class="kb-section-header">
