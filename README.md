@@ -1,15 +1,91 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/owasp/threat-dragon/main/td.vue/src/assets/threatdragon_logo_solid_image.svg"
-  width="200" alt="Threat Dragon Logo"/>
+  <img src="td.vue/public/baby_dragon_glasses_doc.svg"
+  width="200" alt="Threat Dragon Enhanced Logo"/>
 </p>
 
-[![GitHub license](https://img.shields.io/github/license/owasp/threat-dragon.svg)](license.txt)
-[![Build status](https://github.com/OWASP/threat-dragon/actions/workflows/push.yaml/badge.svg?event=push)][build]
-[![GitHub release](https://img.shields.io/github/v/release/owasp/threat-dragon.svg)][latest]
-[![OWASP Lab](https://img.shields.io/badge/owasp-lab%20project-f7b73c.svg)](https://owasp.org/projects/)
-[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/9266/badge)][practices]
+# Threat Dragon Enhanced
 
-# OWASP Threat Dragon
+> **🔬 Experimental Fork** - Built on [OWASP Threat Dragon](https://github.com/OWASP/threat-dragon) v2.5.0
+
+**Threat Dragon Enhanced** is a modified version of OWASP Threat Dragon with additional features for importing and converting operational documents into threat models.
+
+[![GitHub license](https://img.shields.io/github/license/owasp/threat-dragon.svg)](license.txt)
+[![OWASP Lab](https://img.shields.io/badge/owasp-lab%20project-f7b73c.svg)](https://owasp.org/projects/)
+
+---
+
+## ✨ Enhancements Over Original
+
+| Feature | Description |
+|---------|-------------|
+| **T2T Import Wizard** | Import Operational Test Plans (OTP) and automatically generate threat model diagrams |
+| **JSON Topology Import** | Import pre-structured network topology from JSON files |
+| **Unified Validation Framework** | Comprehensive validation service with auto-fix capabilities |
+| **X6 Cell Validator** | Validates diagram cells before rendering to prevent blank canvas issues |
+| **Enhanced Canvas Tools** | Fit Content, Reset Zoom buttons for better diagram navigation |
+
+## 🙏 Credits
+
+This project is based on [OWASP Threat Dragon](https://github.com/OWASP/threat-dragon), created by [Mike Goodwin](https://github.com/mike-goodwin) and maintained by the OWASP community.
+
+- **Original Project:** [OWASP Threat Dragon](https://owasp.org/www-project-threat-dragon/)
+- **Original Repository:** [github.com/OWASP/threat-dragon](https://github.com/OWASP/threat-dragon)
+- **License:** [Apache 2.0](license.txt)
+
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Node.js 18.x or higher
+- npm 9.x or higher
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/BlueCloakForged/ThreatDragonEnhanced.git
+cd ThreatDragonEnhanced
+
+# Install dependencies
+cd td.vue
+npm install
+
+# Run development server
+npm run serve
+```
+
+Then open http://localhost:8080 in your browser.
+
+---
+
+## 📥 T2T Import Feature
+
+The T2T (Test-to-Threat) Import Wizard allows you to:
+
+1. **Upload** OTP documents (PDF, DOCX, TXT, MD) or JSON topology files
+2. **Extract** network entities (actors, processes, stores) and data flows
+3. **Validate** and edit extracted elements
+4. **Choose layout** (tiered, radial, or hierarchical)
+5. **Preview and import** the generated threat model
+
+### JSON Topology Format
+
+```json
+{
+  "nodes": [
+    { "id": "1", "name": "Web Server", "type": "process" },
+    { "id": "2", "name": "Database", "type": "store" }
+  ],
+  "flows": [
+    { "id": "f1", "name": "SQL Query", "source": "1", "target": "2" }
+  ]
+}
+```
+
+---
+
+## Original OWASP Threat Dragon
 
 [OWASP][owasp] [Threat Dragon][project] is a free, open-source, cross-platform threat modeling application.
 It is used to draw threat modeling diagrams and to list threats for elements in the diagram.

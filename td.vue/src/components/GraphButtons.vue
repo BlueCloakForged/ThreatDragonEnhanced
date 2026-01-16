@@ -38,6 +38,18 @@
             text="" />
 
         <td-form-button
+            :onBtnClick="fitContent"
+            icon="compress-arrows-alt"
+            :title="$t('threatmodel.buttons.fitContent')"
+            text="" />
+
+        <td-form-button
+            :onBtnClick="resetZoom"
+            icon="expand"
+            :title="$t('threatmodel.buttons.resetZoom')"
+            text="" />
+
+        <td-form-button
             :onBtnClick="toggleGrid"
             icon="th"
             :title="$t('threatmodel.buttons.toggleGrid')"
@@ -124,6 +136,17 @@ export default {
                 this.graph.zoom(-0.2);
             }
             console.debug('zoom to ' + this.graph.zoom());
+        },
+        fitContent() {
+            // Fit all content in view with padding
+            this.graph.zoomToFit({ padding: 50, maxScale: 1 });
+            console.debug('fit content, zoom: ' + this.graph.zoom());
+        },
+        resetZoom() {
+            // Reset to 100% zoom and center
+            this.graph.zoomTo(1);
+            this.graph.centerContent();
+            console.debug('reset zoom to 100%');
         },
         deleteSelected() {
             this.graph.removeCells(this.graph.getSelectedCells());

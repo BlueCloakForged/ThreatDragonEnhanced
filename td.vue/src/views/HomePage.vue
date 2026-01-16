@@ -11,7 +11,7 @@
                     <b-img class="td-cupcake"
                            id="home-td-logo"
                            :alt="$t('home.imgAlt')"
-                           src="@/assets/threatdragon_logo_image.svg"
+                           src="@/assets/T2TDrag.png"
                     />
                 </b-col>
                 <b-col md="8">
@@ -51,6 +51,8 @@
     margin-bottom: 20px;
     margin-right: 20px;
     margin-left: 20px;
+    width: 60%;
+    height: auto;
 }
 </style>
 

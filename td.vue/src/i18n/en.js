@@ -45,6 +45,7 @@ const eng = {
         actions: {
             openExisting: 'Open an existing threat model',
             createNew: 'Create a new, empty threat model',
+            t2tImport: 'Import from OTP (T2T)',
             readDemo: 'Explore a sample threat model',
             importExisting: 'Import a threat model via JSON'
         }
@@ -209,7 +210,9 @@ const eng = {
             toggleGrid: 'Toggle grid',
             undo: 'Undo edit',
             zoomIn: 'Zoom in',
-            zoomOut: 'Zoom out'
+            zoomOut: 'Zoom out',
+            fitContent: 'Fit content to view',
+            resetZoom: 'Reset zoom (100%)'
         },
         shortcuts: {
             title: 'Shortcuts',

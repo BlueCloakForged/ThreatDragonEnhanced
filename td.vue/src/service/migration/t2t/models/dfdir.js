@@ -294,7 +294,7 @@ export class DFDIR {
 
     /**
    * Validate the entire DFDIR
-   * @returns {string[]} Array of validation error messages
+   * @returns {Object} { valid: boolean, errors: string[] }
    */
     validate() {
         const errors = [];
@@ -332,7 +332,10 @@ export class DFDIR {
             errors.push('DFDIR contains no elements');
         }
 
-        return errors;
+        return {
+            valid: errors.length === 0,
+            errors
+        };
     }
 
     /**
@@ -342,6 +345,9 @@ export class DFDIR {
         const stats = {
             totalElements: this.elements.length,
             totalFlows: this.flows.length,
+            actors: this.elements.filter(el => el.type === 'actor').length,
+            processes: this.elements.filter(el => el.type === 'process').length,
+            stores: this.elements.filter(el => el.type === 'store').length,
             elementsByType: {
                 actor: this.elements.filter(el => el.type === 'actor').length,
                 process: this.elements.filter(el => el.type === 'process').length,
@@ -360,6 +366,7 @@ export class DFDIR {
                     ? Math.round(this.flows.reduce((sum, flow) => sum + flow.confidence, 0) / this.flows.length)
                     : 0
             },
+            extractionSources: [...new Set(this.elements.map(el => el.source))],
             lowConfidenceElements: this.elements.filter(el => el.confidence < 70).length,
             lowConfidenceFlows: this.flows.filter(f => f.confidence < 70).length,
             missingIPs: this.elements.filter(el => !el.ipAddress).length

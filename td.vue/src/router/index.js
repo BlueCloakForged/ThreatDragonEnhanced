@@ -6,6 +6,7 @@ import HomePage from '../views/HomePage.vue';
 import { localRoutes } from './local.js';
 import { desktopRoutes } from './desktop.js';
 import { googleRoutes } from './google.js';
+import { t2tRoutes } from './t2t.js';
 
 const routes = [
     {
@@ -31,7 +32,8 @@ const routes = [
     ...desktopRoutes,
     ...gitRoutes,
     ...localRoutes,
-    ...googleRoutes
+    ...googleRoutes,
+    ...t2tRoutes
 ];
 
 const get = () => {

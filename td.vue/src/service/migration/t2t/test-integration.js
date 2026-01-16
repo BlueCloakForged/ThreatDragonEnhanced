@@ -3,7 +3,6 @@
  * Run this to verify the parser → extractor → DFDIR workflow
  */
 
-import { T2TParser } from './parser/t2tParser.js';
 import { EntityExtractor } from './parser/entityExtractor.js';
 import { DFDIR, DFDElement, DFDFlow } from './models/dfdir.js';
 

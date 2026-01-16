@@ -14,6 +14,11 @@ const getDashboardActions = () => ([
         icon: 'plus'
     },
     {
+        to: '/t2t/import',
+        key: 't2tImport',
+        icon: 'project-diagram'
+    },
+    {
         to: '/demo/select',
         key: 'readDemo',
         icon: 'cloud-download-alt'

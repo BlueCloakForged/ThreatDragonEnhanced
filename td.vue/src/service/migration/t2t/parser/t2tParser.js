@@ -23,6 +23,8 @@ export class T2TParser {
             return await this.parsePDF(file);
         case 'docx':
             return await this.parseDOCX(file);
+        case 'json':
+            return await this.parseJSON(file);
         case 'txt':
         case 'md':
             return await this.parseText(file);
@@ -114,6 +116,48 @@ export class T2TParser {
     }
 
     /**
+     * Parse JSON document with pre-extracted nodes and connections
+     * @param {File} file
+     * @returns {Promise<Object>}
+     */
+    async parseJSON(file) {
+        try {
+            const text = await file.text();
+            const jsonData = JSON.parse(text);
+
+            // Validate JSON structure
+            if (!jsonData.nodes || !Array.isArray(jsonData.nodes)) {
+                throw new Error('JSON must contain a "nodes" array');
+            }
+            if (!jsonData.connections || !Array.isArray(jsonData.connections)) {
+                throw new Error('JSON must contain a "connections" array');
+            }
+
+            return {
+                text: '', // No text extraction needed for JSON
+                metadata: {
+                    source: file.name,
+                    type: 'json',
+                    size: file.size,
+                    extractedAt: new Date().toISOString(),
+                    nodeCount: jsonData.nodes.length,
+                    connectionCount: jsonData.connections.length
+                },
+                // Pass through the pre-extracted data
+                preExtracted: {
+                    nodes: jsonData.nodes,
+                    connections: jsonData.connections
+                }
+            };
+        } catch (error) {
+            if (error instanceof SyntaxError) {
+                throw new Error(`Invalid JSON format: ${error.message}`);
+            }
+            throw new Error(`JSON parsing failed: ${error.message}`);
+        }
+    }
+
+    /**
      * Parse plain text or markdown document
      * @param {File} file
      * @returns {Promise<Object>}
@@ -157,7 +201,7 @@ export class T2TParser {
 
         // Check file type
         const ext = this.getFileExtension(file.name);
-        const supportedTypes = ['pdf', 'docx', 'txt', 'md'];
+        const supportedTypes = ['pdf', 'docx', 'txt', 'md', 'json'];
         if (!supportedTypes.includes(ext)) {
             errors.push(`Unsupported file type: .${ext} (supported: ${supportedTypes.join(', ')})`);
         }
