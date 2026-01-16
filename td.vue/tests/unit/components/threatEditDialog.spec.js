@@ -20,7 +20,11 @@ describe('components/ThreatEditDialog.vue', () => {
         new: false,
         number: 0,
         score: '',
-        id: threatId
+        id: threatId,
+        references: {
+            capec: [],
+            cwe: []
+        }
     });
 
     const getStore = () => new Vuex.Store({

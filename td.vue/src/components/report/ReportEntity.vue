@@ -85,6 +85,10 @@ export default {
                 showMitigated: this.showMitigated,
                 showOutOfScope: this.showOutOfScope
             }).map((threat) => {
+                // Format KB references for display
+                const cweRefs = (threat.references?.cwe || []).map(r => r.id).join(', ');
+                const capecRefs = (threat.references?.capec || []).map(r => r.id).join(', ');
+
                 return {
                     [this.$t('threats.properties.number')]: threat.number,
                     [this.$t('threats.properties.title')]: threat.title,
@@ -93,8 +97,9 @@ export default {
                     [this.$t('threats.properties.status')]: this.translateStatus(threat.status),
                     [this.$t('threats.properties.score')]: threat.score,
                     [this.$t('threats.properties.description')]: threat.description,
-                    [this.$t('threats.properties.mitigation')]: threat.mitigation
-
+                    [this.$t('threats.properties.mitigation')]: threat.mitigation,
+                    ['CAPEC']: capecRefs || '-',
+                    ['CWE']: cweRefs || '-'
                 };
             });
         },
@@ -157,14 +162,14 @@ export default {
                 'Medium': this.$t('threats.severity.medium'),
                 'High': this.$t('threats.severity.high'),
                 'Critical': this.$t('threats.severity.critical')
-            })[severity] ?? 'Unknown';
+            })[severity] || 'Unknown';
         },
         translateStatus(status) {
             return ({
                 'NotApplicable': this.$t('threats.status.notApplicable'),
                 'Open': this.$t('threats.status.open'),
                 'Mitigated': this.$t('threats.status.mitigated')
-            })[status] ?? 'Unknown';
+            })[status] || 'Unknown';
         }
     }
 };

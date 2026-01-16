@@ -18,6 +18,8 @@
                     <th>{{ $t('threats.properties.score') }}</th>
                     <th>{{ $t('threats.properties.description') }}</th>
                     <th>{{ $t('threats.properties.mitigation') }}</th>
+                    <th>CAPEC</th>
+                    <th>CWE</th>
                 </tr>
             </thead>
             <tbody>
@@ -33,6 +35,8 @@
                     <td>{{ threat.score }}</td>
                     <td>{{ threat.description }}</td>
                     <td>{{ threat.mitigation }}</td>
+                    <td>{{ formatKBRefs(threat.references?.capec) }}</td>
+                    <td>{{ formatKBRefs(threat.references?.cwe) }}</td>
                 </tr>
             </tbody>
         </table>
@@ -153,14 +157,18 @@ export default {
                 'Medium': this.$t('threats.severity.medium'),
                 'High': this.$t('threats.severity.high'),
                 'Critical': this.$t('threats.severity.critical')
-            })[severity] ?? 'Unknown';
+            })[severity] || 'Unknown';
         },
         translateStatus(status) {
             return ({
                 'NotApplicable': this.$t('threats.status.notApplicable'),
                 'Open': this.$t('threats.status.open'),
                 'Mitigated': this.$t('threats.status.mitigated')
-            })[status] ?? 'Unknown';
+            })[status] || 'Unknown';
+        },
+        formatKBRefs(refs) {
+            if (!refs || refs.length === 0) return '-';
+            return refs.map(r => r.id).join(', ');
         }
     }
 };

@@ -147,7 +147,46 @@ const filterForDiagram = (data, filters) => {
         return [];
     }
 
-    return data.threats.filter(x => filters.showMitigated || x.status.toLowerCase() !== 'mitigated');
+    return data.threats.filter(x => {
+        // Existing filters
+        if (!filters.showMitigated && x.status.toLowerCase() === 'mitigated') {
+            return false;
+        }
+
+        // KB Reference filters
+        if (filters.missingCWE) {
+            const hasCWE = x.references?.cwe?.length > 0;
+            if (hasCWE) return false; // Hide threats that have CWE (show only missing)
+        }
+
+        if (filters.missingCAPEC) {
+            const hasCAPEC = x.references?.capec?.length > 0;
+            if (hasCAPEC) return false; // Hide threats that have CAPEC (show only missing)
+        }
+
+        return true;
+    });
+};
+
+/**
+ * Check if a threat has CWE references
+ */
+const hasCWEReferences = (threat) => {
+    return threat?.references?.cwe?.length > 0;
+};
+
+/**
+ * Check if a threat has CAPEC references
+ */
+const hasCAPECReferences = (threat) => {
+    return threat?.references?.capec?.length > 0;
+};
+
+/**
+ * Check if a threat has any KB references
+ */
+const hasAnyKBReferences = (threat) => {
+    return hasCWEReferences(threat) || hasCAPECReferences(threat);
 };
 
 export default {
@@ -155,5 +194,8 @@ export default {
     filter,
     filterForDiagram,
     getModelByTranslation: models.getByTranslationValue,
-    hasOpenThreats
+    hasOpenThreats,
+    hasCWEReferences,
+    hasCAPECReferences,
+    hasAnyKBReferences
 };

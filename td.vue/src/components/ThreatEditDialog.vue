@@ -116,6 +116,44 @@
                         </b-form-group>
                     </b-col>
                 </b-form-row>
+
+                <!-- Knowledge Base References Section -->
+                <b-form-row v-if="threat && threat.references">
+                    <b-col>
+                        <div class="kb-references-section">
+                            <h6 class="kb-section-header">
+                                <font-awesome-icon icon="book" class="mr-1" />
+                                {{ $t('threats.properties.kbReferences') || 'Knowledge Base References' }}
+                                <b-button
+                                    size="sm"
+                                    variant="outline-info"
+                                    class="ml-2"
+                                    @click="getSuggestions"
+                                    :disabled="!cellRef"
+                                >
+                                    <font-awesome-icon icon="magic" class="mr-1" />
+                                    Get Suggestions
+                                </b-button>
+                            </h6>
+                            <b-row>
+                                <b-col md="6">
+                                    <KBReferencePicker
+                                        type="capec"
+                                        :label="'CAPEC (Attack Patterns)'"
+                                        v-model="threat.references.capec"
+                                    />
+                                </b-col>
+                                <b-col md="6">
+                                    <KBReferencePicker
+                                        type="cwe"
+                                        :label="'CWE (Weaknesses)'"
+                                        v-model="threat.references.cwe"
+                                    />
+                                </b-col>
+                            </b-row>
+                        </div>
+                    </b-col>
+                </b-form-row>
             </b-form>
 
             <template #modal-footer>
@@ -164,9 +202,14 @@ import { CELL_DATA_UPDATED } from '@/store/actions/cell.js';
 import tmActions from '@/store/actions/threatmodel.js';
 import dataChanged from '@/service/x6/graph/data-changed.js';
 import threatModels from '@/service/threats/models/index.js';
+import KBReferencePicker from '@/components/KBReferencePicker.vue';
+import suggestionEngine from '@/service/kb/suggestionEngine.js';
 
 export default {
     name: 'TdThreatEditDialog',
+    components: {
+        KBReferencePicker
+    },
     computed: {
         ...mapState({
             cellRef: (state) => state.cell.ref,
@@ -225,6 +268,16 @@ export default {
                 // this should never happen with a valid threatId
                 console.warn('Trying to access a non-existent threatId: ' + threatId);
             } else {
+                // Initialize references if not present
+                if (!this.threat.references) {
+                    this.threat.references = { cwe: [], capec: [] };
+                }
+                if (!this.threat.references.cwe) {
+                    this.threat.references.cwe = [];
+                }
+                if (!this.threat.references.capec) {
+                    this.threat.references.capec = [];
+                }
                 this.number = this.threat.number;
                 this.newThreat = state==='new';
                 this.$refs.editModal.show();
@@ -255,6 +308,8 @@ export default {
                 threatRef.new = false;
                 threatRef.number = this.number;
                 threatRef.score = this.threat.score;
+                // Save KB references
+                threatRef.references = this.threat.references || { cwe: [], capec: [] };
                 this.$store.dispatch(CELL_DATA_UPDATED, this.cellRef.data);
                 this.$store.dispatch(tmActions.modified);
                 dataChanged.updateStyleAttrs(this.cellRef);
@@ -294,8 +349,77 @@ export default {
         async immediateDelete() {
             this.deleteThreat();
             this.hideModal();
+        },
+        getSuggestions() {
+            if (!this.cellRef || !this.cellRef.data) {
+                return;
+            }
+
+            // Build context for suggestion engine
+            const nodeData = this.cellRef.data;
+            const context = {
+                is_entrypoint: this.isEntrypoint()
+            };
+
+            // Get suggestions from the engine
+            const suggestions = suggestionEngine.getSuggestions(nodeData, context);
+
+            // Merge suggestions with existing references (avoid duplicates)
+            const existingCapecIds = new Set((this.threat.references.capec || []).map(r => r.id));
+            const existingCweIds = new Set((this.threat.references.cwe || []).map(r => r.id));
+
+            const newCapec = suggestions.capec.filter(s => !existingCapecIds.has(s.id));
+            const newCwe = suggestions.cwe.filter(s => !existingCweIds.has(s.id));
+
+            // Add new suggestions
+            this.threat.references.capec = [...(this.threat.references.capec || []), ...newCapec];
+            this.threat.references.cwe = [...(this.threat.references.cwe || []), ...newCwe];
+
+            // Show feedback
+            const totalAdded = newCapec.length + newCwe.length;
+            if (totalAdded > 0) {
+                this.$bvToast.toast(`Added ${newCapec.length} CAPEC and ${newCwe.length} CWE suggestions`, {
+                    title: 'KB Suggestions',
+                    variant: 'info',
+                    autoHideDelay: 3000
+                });
+            } else {
+                this.$bvToast.toast('No new suggestions available for this element', {
+                    title: 'KB Suggestions',
+                    variant: 'secondary',
+                    autoHideDelay: 2000
+                });
+            }
+        },
+        isEntrypoint() {
+            // Check if this node has inbound connections from external actors
+            // This is a simplified check - could be enhanced with graph traversal
+            const nodeData = this.cellRef?.data;
+            if (!nodeData) return false;
+
+            // Check if node name suggests it's an entry point
+            const name = (nodeData.name || '').toLowerCase();
+            const entryKeywords = ['gateway', 'load balancer', 'lb', 'proxy', 'external', 'public', 'internet'];
+            return entryKeywords.some(kw => name.includes(kw));
         }
     }
 };
 
 </script>
+
+<style scoped>
+.kb-references-section {
+    margin-top: 0.5rem;
+    padding: 0.75rem;
+    background: #f8f9fa;
+    border-radius: 0.375rem;
+    border: 1px solid #e9ecef;
+}
+.kb-section-header {
+    font-size: 0.9rem;
+    color: #495057;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #dee2e6;
+}
+</style>

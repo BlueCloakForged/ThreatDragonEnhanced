@@ -374,7 +374,7 @@ export class T2TConverter {
 
         // Also validate cells specifically for X6 rendering
         if (threatModel.detail?.diagrams) {
-            threatModel.detail.diagrams.forEach((diagram, index) => {
+            threatModel.detail.diagrams.forEach((diagram) => {
                 if (diagram.cells) {
                     const cellResult = validateCellsForRender(diagram.cells);
                     result.merge(cellResult);

@@ -17,7 +17,11 @@ describe('components/GraphThreats.vue', () => {
         mitigation: 'we will mitigate it eventually',
         modelType: 'CIA',
         number: 42,
-        id: 'asdf-asdf-asdf-asdf'
+        id: 'asdf-asdf-asdf-asdf',
+        references: {
+            capec: [],
+            cwe: []
+        }
     });
 
     beforeEach(() => {

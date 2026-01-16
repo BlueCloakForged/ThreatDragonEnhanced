@@ -36,10 +36,9 @@ class ValidationService {
     /**
      * Validate a complete threat model
      * @param {Object} threatModel - The threat model to validate
-     * @param {Object} options - Validation options
      * @returns {Object} - ValidationResult
      */
-    validateThreatModel(threatModel, options = {}) {
+    validateThreatModel(threatModel) {
         const result = createResult({ source: 'validationService.threatModel' });
         
         if (!threatModel) {
@@ -224,9 +223,8 @@ class ValidationService {
     /**
      * Log validation result to console
      * @param {Object} result - ValidationResult
-     * @param {string} level - Log level
      */
-    logResult(result, level = 'debug') {
+    logResult(result) {
         const prefix = '[ValidationService]';
 
         if (result.valid) {

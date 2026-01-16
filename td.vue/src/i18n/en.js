@@ -428,6 +428,13 @@ const eng = {
         },
         instructions: 'Great! Let\'s get you to your model.',
         continue: 'Continue to Threat Model'
+    },
+    kbSuggestions: {
+        title: 'KB Recommendations',
+        loading: 'Loading suggestions...',
+        noSuggestions: 'No suggestions for this element',
+        matchedRules: 'Based on rules',
+        addToThreat: 'Add to Threat'
     }
 };
 

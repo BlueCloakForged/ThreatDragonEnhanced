@@ -5,7 +5,7 @@
  * Enhanced with patterns from T2T Pipeline Agent (entity_extractor.py)
  */
 
-import { T2TPatterns, PatternHelpers, OS_PATTERNS, SERVICE_PATTERNS, NETWORK_PATTERNS, ROLE_PATTERNS, INSTRUMENTATION_PATTERNS } from './t2tPatterns.js';
+import { T2TPatterns, PatternHelpers, OS_PATTERNS, INSTRUMENTATION_PATTERNS } from './t2tPatterns.js';
 import { v4 as uuidv4 } from 'uuid';
 
 export class EntityExtractor {

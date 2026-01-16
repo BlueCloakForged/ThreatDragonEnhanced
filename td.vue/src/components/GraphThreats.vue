@@ -60,6 +60,33 @@
                     <b-badge :v-if="!!modelType">{{ modelType }}</b-badge>
                 </b-col>
             </b-row>
+            <!-- KB Reference Badges -->
+            <b-row v-if="hasKBReferences" class="mt-1">
+                <b-col>
+                    <b-badge
+                        v-for="ref in capecRefs"
+                        :key="ref.id"
+                        variant="info"
+                        class="mr-1 kb-badge"
+                        :title="ref.name"
+                    >{{ ref.id }}</b-badge>
+                    <b-badge
+                        v-for="ref in cweRefs"
+                        :key="ref.id"
+                        variant="warning"
+                        class="mr-1 kb-badge"
+                        :title="ref.name"
+                    >{{ ref.id }}</b-badge>
+                </b-col>
+            </b-row>
+            <b-row v-if="!hasKBReferences" class="mt-1">
+                <b-col>
+                    <small class="text-muted missing-kb-label">
+                        <font-awesome-icon icon="question-circle" class="mr-1" />
+                        No KB refs
+                    </small>
+                </b-col>
+            </b-row>
         </b-card-text>
     </b-card>
 </template>
@@ -101,6 +128,16 @@
     color: $gray;
 }
 
+.kb-badge {
+    font-size: 0.7rem;
+    cursor: help;
+}
+
+.missing-kb-label {
+    font-size: 0.7rem;
+    opacity: 0.6;
+}
+
 </style>
 
 <script>
@@ -115,7 +152,19 @@ export default {
         type: { type: String },
         mitigation: { type: String },
         modelType: { type: String },
-        number: { type: Number }
+        number: { type: Number },
+        references: { type: Object, default: () => ({ cwe: [], capec: [] }) }
+    },
+    computed: {
+        cweRefs() {
+            return this.references?.cwe || [];
+        },
+        capecRefs() {
+            return this.references?.capec || [];
+        },
+        hasKBReferences() {
+            return this.cweRefs.length > 0 || this.capecRefs.length > 0;
+        }
     },
     methods: {
         threatSelected() {

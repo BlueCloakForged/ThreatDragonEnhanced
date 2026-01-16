@@ -167,6 +167,19 @@
 !td.vue/src/service/migration/tmBom/diagrams/*.js
 !td.vue/src/service/migration/tmBom/diagrams/threats/
 !td.vue/src/service/migration/tmBom/diagrams/threats/*.js
+!td.vue/src/service/migration/t2t/
+!td.vue/src/service/migration/t2t/*.js
+!td.vue/src/service/migration/t2t/*.md
+!td.vue/src/service/migration/t2t/models/
+!td.vue/src/service/migration/t2t/models/*.js
+!td.vue/src/service/migration/t2t/parser/
+!td.vue/src/service/migration/t2t/parser/*.js
+!td.vue/src/service/migration/t2t/layout/
+!td.vue/src/service/migration/t2t/layout/*.js
+!td.vue/src/service/migration/t2t/converter/
+!td.vue/src/service/migration/t2t/converter/*.js
+!td.vue/src/service/migration/t2t/validation/
+!td.vue/src/service/migration/t2t/validation/*.js
 !td.vue/src/service/provider/
 !td.vue/src/service/provider/*.js
 !td.vue/src/service/schema/
@@ -178,6 +191,13 @@
 !td.vue/src/service/threats/models/*.js
 !td.vue/src/service/threats/oats/
 !td.vue/src/service/threats/oats/*.js
+!td.vue/src/service/kb/
+!td.vue/src/service/kb/*.js
+!td.vue/src/service/kb/*.json
+!td.vue/src/service/kb/cwe/
+!td.vue/src/service/kb/cwe/*.json
+!td.vue/src/service/kb/capec/
+!td.vue/src/service/kb/capec/*.json
 !td.vue/src/service/x6/
 !td.vue/src/service/x6/*.js
 !td.vue/src/service/x6/graph/
@@ -288,3 +308,9 @@
 # utility scripts
 !utils
 !utils/**/*
+
+# KB build scripts
+!scripts/
+!scripts/*.js
+!scripts/package.json
+!scripts/package-lock.json
