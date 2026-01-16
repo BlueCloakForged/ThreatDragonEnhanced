@@ -16,6 +16,8 @@
 
 ## ✨ Enhancements Over Original
 
+### Core Features
+
 | Feature | Description |
 |---------|-------------|
 | **T2T Import Wizard** | Import Operational Test Plans (OTP) and automatically generate threat model diagrams |
@@ -23,6 +25,18 @@
 | **Unified Validation Framework** | Comprehensive validation service with auto-fix capabilities |
 | **X6 Cell Validator** | Validates diagram cells before rendering to prevent blank canvas issues |
 | **Enhanced Canvas Tools** | Fit Content, Reset Zoom buttons for better diagram navigation |
+
+### CWE/CAPEC Knowledge Base Integration
+
+| Feature | Description |
+|---------|-------------|
+| **Offline KB Search** | Fast search across 969 CWE weaknesses and 615 CAPEC attack patterns |
+| **Threat Dialog KB Pickers** | Searchable pickers for CWE/CAPEC with confidence toggle (suggested/confirmed) |
+| **Get Suggestions** | Rules-based auto-suggestions based on node type, services, ports, and keywords |
+| **Threat List KB Badges** | Visual indicators showing CAPEC (blue) and CWE (yellow) references |
+| **Triage Filters** | Filter threats by missing CWE or CAPEC mappings |
+| **Export with KB References** | KB references included in JSON exports and printed reports |
+| **Element Suggestions Drawer** | Collapsible panel showing context-aware CAPEC/CWE recommendations for selected elements |
 
 ## 🙏 Credits
 
