@@ -372,6 +372,58 @@
                           "type": {
                             "description": "The threat type, selection according to modelType",
                             "type": "string"
+                          },
+                          "references": {
+                            "description": "Knowledge base references (CWE/CAPEC)",
+                            "type": "object",
+                            "properties": {
+                              "cwe": {
+                                "description": "CWE (Common Weakness Enumeration) references",
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "description": "CWE ID (e.g., CWE-89)",
+                                      "type": "string"
+                                    },
+                                    "name": {
+                                      "description": "CWE name",
+                                      "type": "string"
+                                    },
+                                    "confidence": {
+                                      "description": "Confidence level: suggested (auto) or confirmed (user)",
+                                      "type": "string",
+                                      "enum": ["suggested", "confirmed"]
+                                    }
+                                  },
+                                  "required": ["id", "name", "confidence"]
+                                }
+                              },
+                              "capec": {
+                                "description": "CAPEC (Common Attack Pattern) references",
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "description": "CAPEC ID (e.g., CAPEC-66)",
+                                      "type": "string"
+                                    },
+                                    "name": {
+                                      "description": "CAPEC name",
+                                      "type": "string"
+                                    },
+                                    "confidence": {
+                                      "description": "Confidence level: suggested (auto) or confirmed (user)",
+                                      "type": "string",
+                                      "enum": ["suggested", "confirmed"]
+                                    }
+                                  },
+                                  "required": ["id", "name", "confidence"]
+                                }
+                              }
+                            }
                           }
                         },
                         "required": [ "description", "mitigation", "severity", "status", "title", "type" ]

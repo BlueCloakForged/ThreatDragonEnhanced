@@ -70,6 +70,24 @@
                             </b-form-group>
                         </b-col>
                     </b-form-row>
+                    <!-- KB Reference Filters -->
+                    <b-form-row class="mt-2">
+                        <b-col>
+                            <b-form-group label-cols="auto" id="kb-filter-group">
+                                <label class="mr-2"><strong>KB Filters:</strong></label>
+                                <b-form-checkbox
+                                    id="filter_missing_cwe"
+                                    v-model="display.missingCWE"
+                                    inline
+                                >{{ $t('report.options.missingCWE') || 'Missing CWE' }}</b-form-checkbox>
+                                <b-form-checkbox
+                                    id="filter_missing_capec"
+                                    v-model="display.missingCAPEC"
+                                    inline
+                                >{{ $t('report.options.missingCAPEC') || 'Missing CAPEC' }}</b-form-checkbox>
+                            </b-form-group>
+                        </b-col>
+                    </b-form-row>
                 </b-form>
             </b-col>
 
@@ -207,7 +225,9 @@ export default {
                 outOfScope: true,
                 empty: true,
                 properties: false,
-                branding: false
+                branding: false,
+                missingCWE: false,
+                missingCAPEC: false
             },
             isElectron: isElectron()
         };
