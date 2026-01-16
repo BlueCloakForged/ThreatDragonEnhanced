@@ -166,18 +166,24 @@ export class T2TConverter {
      * @returns {Object} - Threat Dragon flow cell
      */
     convertFlowToCell(flow, includeMetadata) {
+        // Build line attrs conditionally to avoid null values
+        const lineAttrs = {
+            stroke: flow.isEncrypted ? '#2E7D32' : '#333333',
+            strokeWidth: 1.5,
+            targetMarker: {
+                name: 'block'
+            }
+        };
+
+        // Only add strokeDasharray if it's a public network
+        if (flow.isPublicNetwork) {
+            lineAttrs.strokeDasharray = '5 5';
+        }
+
         const cell = {
             shape: 'flow',
             attrs: {
-                line: {
-                    stroke: flow.isEncrypted ? '#2E7D32' : '#333333',
-                    strokeWidth: 1.5,
-                    targetMarker: {
-                        name: 'block'
-                    },
-                    sourceMarker: null,
-                    strokeDasharray: flow.isPublicNetwork ? '5 5' : null
-                }
+                line: lineAttrs
             },
             width: 200,
             height: 100,
